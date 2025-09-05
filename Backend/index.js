@@ -4,8 +4,8 @@ import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import userRoutes from "./routes/user.routes.js";
-import chatRoutes from "./routes/chat.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
+import chatRoutes from "./src/routes/chat.routes.js";
 
 import { config } from "dotenv";
 config();

@@ -1,10 +1,11 @@
-import { Configuration } from "openai";
+import OpenAI from "openai";
 import { config } from "dotenv";
 config();
 
 export const configureOpenAI = () => {
-  return new Configuration({
+  const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     organization: process.env.OPEN_AI_ORG || undefined,
   });
+  return openai;
 };

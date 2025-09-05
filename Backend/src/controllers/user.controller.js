@@ -1,7 +1,7 @@
 import { hash, compare } from "bcrypt";
 import User from "../models/user.model.js";
 import { createToken } from "../utils/token-manager.js";
-import { COOKIE_NAME } from "../utils/constants.js";
+import { COOKIE_NAME } from "../utils/constant.js";
 import { config } from "dotenv";
 config();
 

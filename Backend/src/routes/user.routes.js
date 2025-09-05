@@ -6,7 +6,7 @@ import {
   userLogin,
   verifyUserStatus,
   logoutUser,
-} from "../controllers/user.controllers.js";
+} from "../controllers/user.controller.js";
 
 import {
   loginValidator,

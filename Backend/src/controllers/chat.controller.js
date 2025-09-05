@@ -1,9 +1,5 @@
-import express from "express";
 import User from "../models/user.model.js";
 import { configureOpenAI } from "../configs/open-ai-config.js";
-import { OpenAIApi } from "openai";
-import { config } from "dotenv";
-config();
 
 /**
  * Helper: return reference to the array that actually stores chats on user.
@@ -17,7 +13,7 @@ function getOrCreateChats(user) {
   return user.chats;
 }
 
-export const generateChatCompletion = async (req, res, next) => {
+export const generateChatCompletion = async (req, res) => {
   try {
     const { message } = req.body;
 
@@ -39,26 +35,24 @@ export const generateChatCompletion = async (req, res, next) => {
     const userChats = getOrCreateChats(user);
 
     // prepare chat history
-    const chats = userChats.map(({ role, content }) => ({
-      role,
-      content,
-    }));
+    const chats = userChats.map(({ role, content }) => ({ role, content }));
 
     // add the new user message
     chats.push({ role: "user", content: message });
     userChats.push({ role: "user", content: message });
 
-    // call OpenAI
-    const openai = new OpenAIApi(configureOpenAI());
+    // call OpenAI using v4+
+    const openai = configureOpenAI();
 
-    const chatResponse = await openai.createChatCompletion({
+    const chatResponse = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: chats,
     });
 
-    const botMessage = chatResponse?.data?.choices?.[0]?.message;
-    if (!botMessage || typeof botMessage?.content !== "string") {
-      console.error("OpenAI invalid response:", chatResponse?.data);
+    const botMessage = chatResponse.choices[0].message;
+
+    if (!botMessage || typeof botMessage.content !== "string") {
+      console.error("OpenAI invalid response:", chatResponse);
       return res
         .status(500)
         .json({ error: "OpenAI did not return a valid response" });
@@ -69,8 +63,8 @@ export const generateChatCompletion = async (req, res, next) => {
       role: botMessage.role,
       content: botMessage.content,
     });
-    await user.save();
 
+    await user.save();
     return res.status(200).json({ chats: userChats });
   } catch (error) {
     console.error("generateChatCompletion error:", error);
@@ -80,7 +74,7 @@ export const generateChatCompletion = async (req, res, next) => {
   }
 };
 
-export const getAllChats = async (req, res, next) => {
+export const getAllChats = async (req, res) => {
   try {
     const user = await User.findById(res.locals.jwtData.id);
 
@@ -105,7 +99,7 @@ export const getAllChats = async (req, res, next) => {
   }
 };
 
-export const deleteAllChats = async (req, res, next) => {
+export const deleteAllChats = async (req, res) => {
   try {
     const user = await User.findById(res.locals.jwtData.id);
 

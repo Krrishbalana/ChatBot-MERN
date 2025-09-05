@@ -5,7 +5,7 @@ import {
   deleteAllChats,
   generateChatCompletion,
   getAllChats,
-} from "../controllers/chat.controllers.js";
+} from "../controllers/chat.controller.js";
 
 const chatRoutes = express.Router();
 
