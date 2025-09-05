@@ -1,5 +1,5 @@
 import express from "express";
-import User from "../models/user-model.js";
+import User from "../models/user.model.js";
 import { configureOpenAI } from "../configs/open-ai-config.js";
 import { OpenAIApi } from "openai";
 import { config } from "dotenv";
