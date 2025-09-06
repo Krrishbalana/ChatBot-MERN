@@ -50,7 +50,7 @@ This is the React-based frontend for a chatbot powered by AI, built with modern 
 ## Usage
 
 Users can interact with the chatbot frontend by typing messages in the chat interface.  
-![Screenshot Placeholder](link-to-screenshot)
+![Screenshot Placeholder](./src/assets/01.png)
 
 ## Contributing
 
@@ -61,7 +61,3 @@ Contributions are welcome! Please follow these steps:
 3. Make your changes and commit them (`git commit -m 'Add some feature'`).
 4. Push to the branch (`git push origin feature/YourFeature`).
 5. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License.
