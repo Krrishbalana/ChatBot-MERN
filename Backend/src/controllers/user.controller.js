@@ -5,6 +5,9 @@ import { COOKIE_NAME } from "../utils/constant.js";
 import { config } from "dotenv";
 config();
 
+/**
+ * Get all users (for testing/admin)
+ */
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
@@ -15,6 +18,9 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
+/**
+ * User Signup
+ */
 export const userSignUp = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -30,24 +36,17 @@ export const userSignUp = async (req, res, next) => {
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    res.clearCookie(COOKIE_NAME, {
-      path: "/",
-      domain: process.env.DOMAIN,
-      httpOnly: true,
-      signed: true,
-    });
-
+    // Create JWT token
     const token = createToken(user._id.toString(), user.email, "7d");
 
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-
+    // Set cookie
     res.cookie(COOKIE_NAME, token, {
       path: "/",
-      domain: process.env.DOMAIN,
-      expires,
       httpOnly: true,
       signed: true,
+      secure: true, // must be true in production (HTTPS)
+      sameSite: "none", // allows cross-domain cookies
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
 
     return res
@@ -59,10 +58,12 @@ export const userSignUp = async (req, res, next) => {
   }
 };
 
+/**
+ * User Login
+ */
 export const userLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log(email, password);
 
     const user = await User.findOne({ email });
     if (!user)
@@ -77,24 +78,17 @@ export const userLogin = async (req, res, next) => {
         .status(403)
         .json({ message: "ERROR", cause: "Incorrect Password" });
 
-    res.clearCookie(COOKIE_NAME, {
-      path: "/",
-      domain: process.env.DOMAIN,
-      httpOnly: true,
-      signed: true,
-    });
-
+    // Create JWT token
     const token = createToken(user._id.toString(), user.email, "7d");
 
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-
+    // Set cookie for cross-domain auth
     res.cookie(COOKIE_NAME, token, {
       path: "/",
-      domain: process.env.DOMAIN,
-      expires,
       httpOnly: true,
       signed: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res
@@ -106,6 +100,9 @@ export const userLogin = async (req, res, next) => {
   }
 };
 
+/**
+ * Verify User Status (Auth Check)
+ */
 export const verifyUserStatus = async (req, res, next) => {
   try {
     const user = await User.findById(res.locals.jwtData.id);
@@ -127,10 +124,13 @@ export const verifyUserStatus = async (req, res, next) => {
       .json({ message: "OK", name: user.name, email: user.email });
   } catch (err) {
     console.log(err);
-    return res.status(200).json({ message: "ERROR", cause: err.message });
+    return res.status(500).json({ message: "ERROR", cause: err.message });
   }
 };
 
+/**
+ * Logout User
+ */
 export const logoutUser = async (req, res, next) => {
   try {
     const user = await User.findById(res.locals.jwtData.id);
@@ -147,11 +147,13 @@ export const logoutUser = async (req, res, next) => {
         .json({ message: "ERROR", cause: "Permissions didn't match" });
     }
 
+    // Clear cookie
     res.clearCookie(COOKIE_NAME, {
       path: "/",
-      domain: process.env.DOMAIN,
       httpOnly: true,
       signed: true,
+      secure: true,
+      sameSite: "none",
     });
 
     return res
@@ -159,6 +161,6 @@ export const logoutUser = async (req, res, next) => {
       .json({ message: "OK", name: user.name, email: user.email });
   } catch (err) {
     console.log(err);
-    return res.status(200).json({ message: "ERROR", cause: err.message });
+    return res.status(500).json({ message: "ERROR", cause: err.message });
   }
 };
