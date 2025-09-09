@@ -12,7 +12,7 @@ import Button from "../components/shared/Button";
 import { useAuth } from "../context/context";
 
 // Axios defaults
-axios.defaults.baseURL = "http://localhost:5001/api";
+axios.defaults.baseURL = "https://chatbot-mern-env.up.railway.app/api";
 axios.defaults.withCredentials = true; // Enable sending credentials
 
 const Login = () => {
