@@ -21,15 +21,10 @@ const allowedOrigins = [
 // Middlewares
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps, curl, etc.)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: [
+      "http://localhost:5173", // dev
+      "https://chat-bot-mern.vercel.app", // prod
+    ],
     credentials: true,
   })
 );
