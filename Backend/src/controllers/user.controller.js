@@ -43,7 +43,7 @@ export const userSignUp = async (req, res, next) => {
     res.cookie(COOKIE_NAME, token, {
       path: "/",
       httpOnly: true,
-      signed: true,
+      //signed: true,
       secure: true, // must be true in production (HTTPS)
       sameSite: "None", // allows cross-domain cookies
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
@@ -85,7 +85,7 @@ export const userLogin = async (req, res, next) => {
     res.cookie(COOKIE_NAME, token, {
       path: "/",
       httpOnly: true,
-      signed: true,
+      //signed: true,
       secure: true,
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -151,7 +151,7 @@ export const logoutUser = async (req, res, next) => {
     res.clearCookie(COOKIE_NAME, {
       path: "/",
       httpOnly: true,
-      signed: true,
+      //signed: true,
       secure: true,
       sameSite: "None",
     });
